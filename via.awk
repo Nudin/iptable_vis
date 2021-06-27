@@ -10,9 +10,10 @@ BEGIN {
 # Begin of a chain
 /^Chain/ {
 	chainname = $2
+	in_chain=1
 	if ( chainname !~ chain_selector && chain_selector != "")
 		next
-	in_chain=1
+	in_relevant_chain=1
 	policy=chainname "_" $4
 	last=chainname
 	print indent "group {" # } group the chain
@@ -28,6 +29,9 @@ BEGIN {
 
 # Filter in chain
 in_chain && /^ *[0-9]/ {
+	filters_in_chain++
+	if ( !in_relevant_chain )
+		next
 	name="Node" counter++
 	label=""
 	if ( $4 != "all" )
@@ -56,14 +60,18 @@ in_chain && /^ *[0-9]/ {
 	last=name
 	filter_nodes[num_targets++] = name
 	targets[name] = chainname "_" $3
+	all_targets[name] = $3
 	target_labels[chainname "_" $3] = $3
 }
 
 # End of chain
 /^$/ {
-	if (in_chain)
-		finalize_chain()
 	in_chain=0
+	filter_number[chainname] = filters_in_chain
+	filters_in_chain=0
+	if (in_relevant_chain)
+		finalize_chain()
+	in_relevant_chain=0
 }
 
 function finalize_chain() {
@@ -115,7 +123,7 @@ function finalize_chain() {
 			print indent chainname "_RETURN [class=return]"
 		}
 		else {
-			print indent target " [class=target, label=\"" target_label "\"]"
+			print indent target " [class=target, class=" target_label ", label=\"" target_label "\"]"
 		}
 	}
 	delete filter_nodes
@@ -128,7 +136,7 @@ function finalize_chain() {
 }
 
 END {
-	if (in_chain)
+	if (in_relevant_chain)
 		finalize_chain()
 	print indent "class chain_head [shape=ellipse]"
 	print indent "class rule [shape=diamond, width=200]"
@@ -143,6 +151,12 @@ END {
 	print indent "class fake [shape=none, width=1]"
 	for (i=0; i<=fakenode; i++)
 		print indent "f" i " [class=fake]"
+	for ( idx in all_targets ) {
+		if (filter_number[all_targets[idx]] == 0 )
+			print indent "class", all_targets[idx], "[style=dotted, linecolor=\"#444\", textcolor=\"#444\"]"
+		else
+			print indent "class", all_targets[idx], "[linecolor=black]"
+	}
 	# { End blockdiag
 	indent=""
 	print indent "}"
