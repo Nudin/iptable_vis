@@ -51,13 +51,7 @@ END {
 	for ( node in nodes ) {
 		name = nodes[node]
 		target = targets[name]
-		if ( ! used[target] || target == policy ) {
-		   print name " -> " target;
-		   used[target] = 1
-	   }
-	   else {
-		   print target " <- " name;
-	   }
+	   print name " -- f" fakenode++ " -> " target;
 	   if ( target == "ACCEPT" ) {
 		   print "[color=\"green\"]"
 			print "ACCEPT [color = \"lightgreen\"]"
@@ -72,6 +66,10 @@ END {
 		print "REJECT [color = \"red\"]"
 	if ( policy == "ACCEPT")
 		print "ACCEPT [color = \"lightgreen\"]"
+
+	print "class fake [shape=none, width=1]"
+	for (i=0; i<=fakenode; i++)
+		print "f" i "  [ class=fake]"
 
 	print "}"
 	}
