@@ -51,7 +51,10 @@ END {
 	for ( node in nodes ) {
 		name = nodes[node]
 		target = targets[name]
-	   print name " -- f" fakenode++ " -> " target;
+		if ( target != policy )
+		   print name " -- f" fakenode++ " -> " target;
+		else
+		   print name " -- f" fakenode++ " -> f" fakenode++ " -> " target;
 	   if ( target == "ACCEPT" ) {
 		   print "[color=\"green\"]"
 			print "ACCEPT [color = \"lightgreen\"]"
