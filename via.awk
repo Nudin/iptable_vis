@@ -1,24 +1,30 @@
-/INPUT/ {
-	input=1
-	policy=$4
+BEGIN {
 	print "blockdiag {" # }
 	print "orientation=portrait"
-	#print "INPUT"
-	last="INPUT"
+}
+
+/^Chain/ {
+	if ( name != $2 && name != "" )
+		next
+	in_chain=1
+	policy=$4
+	last=$2
 	counter = 0
-	print "group {"
+	print "group {" # }
 	print "orientation=portrait"
 	print "shape=line; style=none"
-	print "group {"
+	print "group {" # }
 	print "orientation=portrait"
 	print "shape=line; style=none"
 }
 
 /^$/ {
-	input=0
+	in_chain=0
+	if( in_chain )
+		exit
 }
 
-input && /^ *[0-9]/ {
+in_chain && /^ *[0-9]/ {
 	name="Node" counter++
 	label=""
 	if ( $4 != "all" )
@@ -42,11 +48,12 @@ input && /^ *[0-9]/ {
 	last=name
 	nodes[num_targets++] = name
 	targets[name] = $3
-};
+}
 
 END {
 	print "END  [shape=none]"
 	print last " -- END -> " policy
+	# {
 	print "}"
 	for ( node in nodes ) {
 		name = nodes[node]
@@ -64,6 +71,7 @@ END {
 			print "REJECT [color = \"red\"]"
 		}
    }
+	# {
 	print "}"
 	if ( policy == "REJECT")
 		print "REJECT [color = \"red\"]"
@@ -74,5 +82,6 @@ END {
 	for (i=0; i<=fakenode; i++)
 		print "f" i "  [ class=fake]"
 
+	# {
 	print "}"
-	}
+}
