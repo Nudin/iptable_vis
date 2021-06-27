@@ -8,6 +8,7 @@ BEGIN {
 		next
 	in_chain=1
 	policy=$4
+	print $2 " [shape = ellipse]"
 	last=$2
 	counter = 0
 	print "group {" # }
@@ -43,7 +44,7 @@ in_chain && /^ *[0-9]/ {
 		label = "*"
 	#for (i=10; i<=NF; i++)
 	#	label=label " " $i
-	print name " [label = \"" label "\"]"
+	print name " [label = \"" label "\", shape=diamond]"
 	print last " -> " name
 	last=name
 	nodes[num_targets++] = name
@@ -69,6 +70,9 @@ END {
 	   else if ( target == "REJECT" ) {
 		   print "[color=\"red\"]"
 			print "REJECT [color = \"red\"]"
+		}
+		else {
+			print target " [shape=ellipse]"
 		}
    }
 	# {
