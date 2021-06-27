@@ -1,16 +1,17 @@
 BEGIN {
 	print "blockdiag {" # }
 	print "orientation=portrait"
+	counter = 0
 }
 
 /^Chain/ {
-	if ( name != $2 && name != "" )
+	chainname = $2
+	if ( chainname !~ chain_selector && chain_selector != "")
 		next
 	in_chain=1
-	policy=$4
-	print $2 " [shape = ellipse]"
-	last=$2
-	counter = 0
+	policy=chainname "_" $4
+	print chainname " [shape = ellipse]"
+	last=chainname
 	print "group {" # }
 	print "orientation=portrait"
 	print "shape=line; style=none"
@@ -19,10 +20,43 @@ BEGIN {
 	print "shape=line; style=none"
 }
 
-/^$/ {
+in_chain && /^$/ {
 	in_chain=0
-	if( in_chain )
-		exit
+	print chainname "_END" "  [shape=none]"
+	print last " -- " chainname "_END -> " policy
+	# {
+	print "}"
+	for ( node in nodes ) {
+		name = nodes[node]
+		target = targets[name]
+		print target " [label=" target_labels[target] "]"
+		if ( target != policy )
+		   print name " -- f" fakenode++ " -> " target;
+		else
+		   print name " -- f" fakenode++ " -> f" fakenode++ " -> " target;
+	   if ( target ~ "_ACCEPT$" ) {
+		   print "[color=\"green\"]"
+			print chainname "_ACCEPT [color = \"lightgreen\", label=\"" target_labels[target] "\"]"
+		}
+	   else if ( target ~ "_REJECT$" ) {
+		   print "[color=\"red\"]"
+			print chainname "_REJECT [color = \"red\", label=\"" target_labels[target] "\"]"
+		}
+		else {
+			print target " [shape=ellipse]"
+		}
+   }
+   delete nodes
+	# {
+	print "}"
+
+	if ( policy ~ "_REJECT$")
+		print chainname "_REJECT [color = \"red\", label=\"REJECT\"]"
+	if ( policy ~ "_ACCEPT$")
+		print chainname "_ACCEPT [color = \"lightgreen\", label=\"ACCEPT\"]"
+
+	#if( in_chain )
+	#	exit
 }
 
 in_chain && /^ *[0-9]/ {
@@ -48,40 +82,11 @@ in_chain && /^ *[0-9]/ {
 	print last " -> " name
 	last=name
 	nodes[num_targets++] = name
-	targets[name] = $3
+	targets[name] = chainname "_" $3
+	target_labels[chainname "_" $3] = $3
 }
 
 END {
-	print "END  [shape=none]"
-	print last " -- END -> " policy
-	# {
-	print "}"
-	for ( node in nodes ) {
-		name = nodes[node]
-		target = targets[name]
-		if ( target != policy )
-		   print name " -- f" fakenode++ " -> " target;
-		else
-		   print name " -- f" fakenode++ " -> f" fakenode++ " -> " target;
-	   if ( target == "ACCEPT" ) {
-		   print "[color=\"green\"]"
-			print "ACCEPT [color = \"lightgreen\"]"
-		}
-	   else if ( target == "REJECT" ) {
-		   print "[color=\"red\"]"
-			print "REJECT [color = \"red\"]"
-		}
-		else {
-			print target " [shape=ellipse]"
-		}
-   }
-	# {
-	print "}"
-	if ( policy == "REJECT")
-		print "REJECT [color = \"red\"]"
-	if ( policy == "ACCEPT")
-		print "ACCEPT [color = \"lightgreen\"]"
-
 	print "class fake [shape=none, width=1]"
 	for (i=0; i<=fakenode; i++)
 		print "f" i "  [ class=fake]"
