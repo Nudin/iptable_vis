@@ -41,9 +41,16 @@ in_chain && /^ *[0-9]/ {
 	if ( $8 != "anywhere" )
 		label=label "src:" $8 " "
 	if ( $9 != "anywhere" )
-		label=label "dst:" $9
+		label=label "dst:" $9 " "
+	for (i=10; i<=NF; i++) {
+		if ( $i == "/*" )
+			break
+		label=label " " $i
+	}
 	if ( label == "" )
 		label = "*"
+	gsub(/  /, " ", label);
+	gsub(/^ *| *$/, "", label);
 	print indent name " [class=rule, label=\"" label "\"]"
 	print indent last, "->", name
 	last=name
