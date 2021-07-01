@@ -70,9 +70,11 @@ function finalize_chain() {
 		target = targets[name]
 		target_label = target_labels[target]
 		if ( target ~ "_ACCEPT$" )
-			linestyle=" [color=\"green\"]"
-		else if ( target ~ "_REJECT$" )
-			linestyle=" [color=\"red\"]"
+			linestyle=" [class=accept_line]"
+		else if ( target ~ "_REJECT|_DROP$" )
+			linestyle=" [class=reject_line]"
+		else if ( target ~ "_RETURN$" )
+			linestyle=" [class=return_line]"
 		else
 			linestyle=""
 		# To avoid issues of the dia rendering, a "fakenode" – a node that is
@@ -96,8 +98,14 @@ function finalize_chain() {
 		if ( target ~ "_ACCEPT$" ) {
 			print indent chainname "_ACCEPT [class=accept]"
 		}
+		else if ( target ~ "_DROP$" ) {
+			print indent chainname "_DROP [class=drop]"
+		}
 		else if ( target ~ "_REJECT$" ) {
 			print indent chainname "_REJECT [class=reject]"
+		}
+		else if ( target ~ "_RETURN$" ) {
+			print indent chainname "_RETURN [class=return]"
 		}
 		else {
 			print indent target " [class=target, label=\"" target_label "\"]"
@@ -119,7 +127,12 @@ END {
 	print indent "class rule [shape=diamond, width=200]"
 	print indent "class target [shape=ellipse]"
 	print indent "class reject [color = \"red\", label=\"REJECT\"]"
+	print indent "class reject_line [color = \"red\"]"
+	print indent "class drop [color = \"red\", label=\"DROP\"]"
+	print indent "class return [color = \"#1ab3ff\", label=\"RETURN\"]"
+	print indent "class return_line [color = \"blue\"]"
 	print indent "class accept [color = \"lightgreen\", label=\"ACCEPT\"]"
+	print indent "class accept_line [color = \"green\"]"
 	print indent "class fake [shape=none, width=1]"
 	for (i=0; i<=fakenode; i++)
 		print indent "f" i " [class=fake]"
