@@ -89,18 +89,23 @@ in_chain && /^ *[0-9]/ {
 /^$/ {
 	in_chain=0
 	filter_number[chainname] = filters_in_chain
-	filters_in_chain=0
 	if (in_relevant_chain)
 		finalize_chain()
+	filters_in_chain=0
 	in_relevant_chain=0
 }
 
 function finalize_chain() {
-	if ( filters_in_chain || include_empty_chains )
-		print indent chainname " [class=chain_head]"
-	print indent chainname "_END" "	[shape=none]"
-	if ( policy )
+	if ( filters_in_chain || include_empty_chains ) {
+		if ( chainname ~ "^(INPUT|OUTPUT|FORWARD|PREROUTING|POSTROUTING)$" )
+			print indent chainname " [class=chain_head, shape=box]"
+		else
+			print indent chainname " [class=chain_head]"
+	}
+	if ( policy ) {
 		print indent last " -- " chainname "_END -> " chainname "_" policy
+		print indent chainname "_END" "	[shape=none]"
+	}
 	# { End filter group
 	indent="    "
 	print indent "}"
