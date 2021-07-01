@@ -11,11 +11,12 @@ BEGIN {
 /^Chain/ {
 	chainname = $2
 	in_chain=1
+	is_a_chain[chainname] = 1
 	if ( chainname !~ chain_selector && chain_selector != "")
 		next
 	in_relevant_chain=1
 	if ( $3 == "(policy" )
-		policy=chainname "_" $4
+		policy=$4
 	else
 		policy=0
 	last=chainname
@@ -71,15 +72,17 @@ in_chain && /^ *[0-9]/ {
 	print indent last, "->", name
 	last=name
 	filter_nodes[num_targets++] = name
-	node_name = chainname "_" $3
+	target_node_name = chainname "_" $3
 	if ( reject_with )
-		node_name = node_name "_" reject_with
+		target_node_name = target_node_name "_" reject_with
 	target_label = $3
 	if ( reject_with )
 		target_label = target_label "\\n" reject_with
-	targets[name] = node_name
-	all_targets[name] = node_name
-	target_labels[node_name] = target_label
+
+	targets[name] = $3
+	all_targets[name] = $3
+	target_node_names[name] = target_node_name
+	target_labels[target_node_name] = target_label
 }
 
 # End of chain
@@ -97,19 +100,22 @@ function finalize_chain() {
 		print indent chainname " [class=chain_head]"
 	print indent chainname "_END" "	[shape=none]"
 	if ( policy )
-		print indent last " -- " chainname "_END -> " policy
+		print indent last " -- " chainname "_END -> " chainname "_" policy
 	# { End filter group
 	indent="    "
 	print indent "}"
+
+	# Draw all connections to targets
 	for ( idx in filter_nodes ) {
 		name = filter_nodes[idx]
 		target = targets[name]
-		target_label = target_labels[target]
-		if ( target ~ "_ACCEPT$" )
+		target_node_name = target_node_names[name]
+		target_label = target_labels[target_node_name]
+		if ( target ~ "^ACCEPT$" )
 			linestyle=" [class=accept_line]"
-		else if ( target ~ "_REJECT($|_)|_DROP$" )
+		else if ( target ~ "^REJECT($|_)|DROP$" )
 			linestyle=" [class=reject_line]"
-		else if ( target ~ "_RETURN$" )
+		else if ( target ~ "^RETURN$" )
 			linestyle=" [class=return_line]"
 		else
 			linestyle=""
@@ -118,38 +124,41 @@ function finalize_chain() {
 		# For connections to the policy we use an extra node, to make sure the
 		# line doesn't cross any other.
 		if ( target != policy )
-			print indent name, "-- f" fakenode++, "->", target linestyle;
+			print indent name, "-- f" fakenode++, "->", target_node_name linestyle;
 		else
-			print indent name, "-- f" fakenode++, "-> f" fakenode++, "->", target linestyle;
+			print indent name, "-- f" fakenode++, "-> f" fakenode++, "->", target_node_name linestyle;
 	}
+
+	# Format all target nodes
 	if ( policy )
 		targets[++num_targets] = policy # Policies are also targets
-	# Format all targets
-	for ( idx in targets ) {
-		target = targets[idx]
-		target_label = target_labels[target]
-		if ( allready_rendered[target] )
+	for ( name in target_node_names ) {
+		target = targets[name]
+		target_node_name = target_node_names[name]
+		target_label = target_labels[target_node_name]
+		if ( allready_rendered[target_node_name] )
 			continue
 		else
-			allready_rendered[target] = 1
-		if ( target ~ "_ACCEPT$" ) {
+			allready_rendered[target_node_name] = 1
+		if ( target ~ "^ACCEPT$" ) {
 			print indent chainname "_ACCEPT [class=accept]"
 		}
-		else if ( target ~ "_DROP$" ) {
+		else if ( target ~ "^DROP$" ) {
 			print indent chainname "_DROP [class=drop]"
 		}
-		else if ( target ~ "_REJECT($|_)" ) {
-			print indent target " [class=reject, label=\"" target_label "\"]"
+		else if ( target ~ "^REJECT($|_)" ) {
+			print indent target_node_name " [class=reject, label=\"" target_label "\"]"
 		}
-		else if ( target ~ "_RETURN$" ) {
+		else if ( target ~ "^RETURN$" ) {
 			print indent chainname "_RETURN [class=return]"
 		}
 		else {
-			print indent target " [class=target, class=\"" target "\", label=\"" target_label "\"]"
+			print indent target_node_name " [class=target, class=\"" target_label "\", label=\"" target_label "\"]"
 		}
 	}
 	delete filter_nodes
 	delete targets
+	delete target_node_names
 	delete target_labels
 	delete allready_rendered
 	# { End group around chain
@@ -162,7 +171,7 @@ END {
 		finalize_chain()
 	print indent "class chain_head [shape=ellipse]"
 	print indent "class rule [shape=diamond, width=200]"
-	print indent "class target [shape=ellipse]"
+	print indent "class target [width=150]"
 	print indent "class reject [color = \"red\", label=\"REJECT\"]"
 	print indent "class reject_line [color = \"red\"]"
 	print indent "class drop [color = \"red\", label=\"DROP\"]"
@@ -173,12 +182,15 @@ END {
 	print indent "class fake [shape=none, width=1]"
 	for (i=0; i<=fakenode; i++)
 		print indent "f" i " [class=fake]"
+	# Style the targets depending on their type and content
 	for ( idx in all_targets ) {
-		style=""
-		if (filter_number[all_targets[idx]] == 0 )
-			style += "style=dotted, linecolor=\"#444\", textcolor=\"#444\""
+		target=all_targets[idx]
+		if ( ! is_a_chain[target] )
+			style="shape=box"
+		else if (filter_number[all_targets[idx]] == 0 )
+			style="shape=ellipse, style=dotted, linecolor=\"#444\", textcolor=\"#444\""
 		else
-			print indent "class", all_targets[idx], "[linecolor=black]"
+			style="shape=ellipse, linecolor=black"
 		print indent "class", all_targets[idx], "["style"]"
 	}
 	# { End blockdiag
