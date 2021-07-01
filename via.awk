@@ -23,7 +23,6 @@ BEGIN {
 	indent="    "
 	print indent "orientation=portrait"
 	print indent "shape=line; style=none"
-	print indent chainname " [class=chain_head]"
 	print indent "group {" # } group the filter rules
 	indent="      "
 	print indent "orientation=portrait"
@@ -78,6 +77,8 @@ in_chain && /^ *[0-9]/ {
 }
 
 function finalize_chain() {
+	if ( filters_in_chain || include_empty_chains )
+		print indent chainname " [class=chain_head]"
 	print indent chainname "_END" "	[shape=none]"
 	if ( policy )
 		print indent last " -- " chainname "_END -> " policy
