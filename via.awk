@@ -35,6 +35,7 @@ in_chain && /^ *[0-9]/ {
 	if ( !in_relevant_chain )
 		next
 	name="Node" counter++
+	reject_with=""
 	label=""
 	if ( $4 != "all" )
 		label=label $4 " "
@@ -48,10 +49,19 @@ in_chain && /^ *[0-9]/ {
 		label=label "src:" $8 " "
 	if ( $9 != "anywhere" )
 		label=label "dst:" $9 " "
+	comment=0
 	for (i=10; i<=NF; i++) {
 		if ( $i == "/*" )
-			break
-		label=label " " $i
+			comment=1
+		else if ( $i == "*/" )
+			comment=0
+		else if ( $i == "reject-with" ) {
+			i++
+			reject_with = $i
+			i++
+		}
+		else if ( ! comment )
+			label=label " " $i
 	}
 	if ( label == "" )
 		label = "*"
@@ -61,9 +71,15 @@ in_chain && /^ *[0-9]/ {
 	print indent last, "->", name
 	last=name
 	filter_nodes[num_targets++] = name
-	targets[name] = chainname "_" $3
-	all_targets[name] = $3
-	target_labels[chainname "_" $3] = $3
+	node_name = chainname "_" $3
+	if ( reject_with )
+		node_name = node_name "_" reject_with
+	target_label = $3
+	if ( reject_with )
+		target_label = target_label "\\n" reject_with
+	targets[name] = node_name
+	all_targets[name] = node_name
+	target_labels[node_name] = target_label
 }
 
 # End of chain
@@ -91,7 +107,7 @@ function finalize_chain() {
 		target_label = target_labels[target]
 		if ( target ~ "_ACCEPT$" )
 			linestyle=" [class=accept_line]"
-		else if ( target ~ "_REJECT|_DROP$" )
+		else if ( target ~ "_REJECT($|_)|_DROP$" )
 			linestyle=" [class=reject_line]"
 		else if ( target ~ "_RETURN$" )
 			linestyle=" [class=return_line]"
@@ -122,14 +138,14 @@ function finalize_chain() {
 		else if ( target ~ "_DROP$" ) {
 			print indent chainname "_DROP [class=drop]"
 		}
-		else if ( target ~ "_REJECT$" ) {
-			print indent chainname "_REJECT [class=reject]"
+		else if ( target ~ "_REJECT($|_)" ) {
+			print indent target " [class=reject, label=\"" target_label "\"]"
 		}
 		else if ( target ~ "_RETURN$" ) {
 			print indent chainname "_RETURN [class=return]"
 		}
 		else {
-			print indent target " [class=target, class=" target_label ", label=\"" target_label "\"]"
+			print indent target " [class=target, class=\"" target "\", label=\"" target_label "\"]"
 		}
 	}
 	delete filter_nodes
@@ -158,10 +174,12 @@ END {
 	for (i=0; i<=fakenode; i++)
 		print indent "f" i " [class=fake]"
 	for ( idx in all_targets ) {
+		style=""
 		if (filter_number[all_targets[idx]] == 0 )
-			print indent "class", all_targets[idx], "[style=dotted, linecolor=\"#444\", textcolor=\"#444\"]"
+			style += "style=dotted, linecolor=\"#444\", textcolor=\"#444\""
 		else
 			print indent "class", all_targets[idx], "[linecolor=black]"
+		print indent "class", all_targets[idx], "["style"]"
 	}
 	# { End blockdiag
 	indent=""
