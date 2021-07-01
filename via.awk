@@ -14,7 +14,10 @@ BEGIN {
 	if ( chainname !~ chain_selector && chain_selector != "")
 		next
 	in_relevant_chain=1
-	policy=chainname "_" $4
+	if ( $3 == "(policy" )
+		policy=chainname "_" $4
+	else
+		policy=0
 	last=chainname
 	print indent "group {" # } group the chain
 	indent="    "
@@ -76,7 +79,8 @@ in_chain && /^ *[0-9]/ {
 
 function finalize_chain() {
 	print indent chainname "_END" "	[shape=none]"
-	print indent last " -- " chainname "_END -> " policy
+	if ( policy )
+		print indent last " -- " chainname "_END -> " policy
 	# { End filter group
 	indent="    "
 	print indent "}"
@@ -101,7 +105,8 @@ function finalize_chain() {
 		else
 			print indent name, "-- f" fakenode++, "-> f" fakenode++, "->", target linestyle;
 	}
-	targets[++num_targets] = policy # Policies are also targets
+	if ( policy )
+		targets[++num_targets] = policy # Policies are also targets
 	# Format all targets
 	for ( idx in targets ) {
 		target = targets[idx]
