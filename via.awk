@@ -135,8 +135,10 @@ function finalize_chain() {
 	}
 
 	# Format all target nodes
-	if ( policy )
+	if ( policy ) {
 		targets[++num_targets] = policy # Policies are also targets
+		target_node_names[num_targets] = chainname "_" policy # Policies are also targets
+		}
 	for ( name in target_node_names ) {
 		target = targets[name]
 		target_node_name = target_node_names[name]
