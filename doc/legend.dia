@@ -1,0 +1,39 @@
+blockdiag {
+      node_width = 200;
+    INPUT [class=chain_head, shape=box]
+    Node0 [class=rule, label="Rule"]
+    group {
+          shape=line
+          style=none
+          Node0 [class=rule, label="in:eth0 tcp"]
+          f0 [style=none, label="Rule that matches tcp pakages from eth0", fontsize=14]
+          Node0 -> f0 [style=none]
+    }    group {
+          shape=line
+          style=none
+          Node1 [class=rule, label="*"]
+          f1 [style=none, label="Rule that always matches", fontsize=14]
+          Node1 -> f1 [style=none]
+    }
+    ACCEPT [class=accept]
+    DROP [class=drop]
+    RETURN [class=return]
+    AUDIT [class=target]
+    chain [class=target, class="chain", label="user defined chain"]
+    empty_chain [class=target, class="empty_chain", label="empty chain"]
+  class chain_head [shape=ellipse]
+  class rule [shape=diamond, width=200]
+  class target [width=150]
+  class reject [color = "red", label="REJECT"]
+  class reject_line [color = "red"]
+  class drop [color = "red", label="DROP"]
+  class return [color = "#1ab3ff", label="RETURN"]
+  class return_line [color = "blue"]
+  class accept [color = "lightgreen", label="ACCEPT"]
+  class accept_line [color = "green"]
+  class fake [shape=none, width=1]
+  class ACCEPT [shape=box]
+  class LOG [shape=box]
+  class chain [shape=ellipse]
+  class empty_chain [shape=ellipse, style=dotted, linecolor="#444", textcolor="#444"]
+}

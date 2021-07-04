@@ -3,7 +3,7 @@ iptables-vis – visualise iptables chains
 
 This script reads iptables output and generates a nice flow chart. Works with all tables and chains.
 
-![Example](example.svg)
+![Example](doc/example.svg)
 
 Usage
 =====
@@ -19,3 +19,8 @@ To display only selected chains (supports regexp):
 To also render empty chains:
 
 `awk -f iptables-vis.awk -v 'include_empty_chains=1 < iptables.txt > iptables.dia'`
+
+Legend
+======
+
+![Legend](doc/legend.svg)

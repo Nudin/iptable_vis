@@ -1,0 +1,86 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN" "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
+<svg viewBox="0 0 592 760" xmlns="http://www.w3.org/2000/svg" xmlns:inkspace="http://www.inkscape.org/namespaces/inkscape" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <defs id="defs_block">
+    <filter height="1.504" id="filter_blur" inkspace:collect="always" width="1.1575" x="-0.07875" y="-0.252">
+      <feGaussianBlur id="feGaussianBlur3780" inkspace:collect="always" stdDeviation="4.2" />
+    </filter>
+  </defs>
+  <title>blockdiag</title>
+  <desc>blockdiag {
+      node_width = 200;
+    INPUT [class=chain_head, shape=box]
+    Node0 [class=rule, label="Rule"]
+    group {
+          shape=line
+          style=none
+          Node0 [class=rule, label="in:eth0 tcp"]
+          f0 [style=none, label="Rule that matches tcp pakages from eth0", fontsize=14]
+          Node0 -&gt; f0 [style=none]
+    }    group {
+          shape=line
+          style=none
+          Node1 [class=rule, label="*"]
+          f1 [style=none, label="Rule that always matches", fontsize=14]
+          Node1 -&gt; f1 [style=none]
+    }
+    ACCEPT [class=accept]
+    DROP [class=drop]
+    RETURN [class=return]
+    AUDIT [class=target]
+    chain [class=target, class="chain", label="user defined chain"]
+    empty_chain [class=target, class="empty_chain", label="empty chain"]
+  class chain_head [shape=ellipse]
+  class rule [shape=diamond, width=200]
+  class target [width=150]
+  class reject [color = "red", label="REJECT"]
+  class reject_line [color = "red"]
+  class drop [color = "red", label="DROP"]
+  class return [color = "#1ab3ff", label="RETURN"]
+  class return_line [color = "blue"]
+  class accept [color = "lightgreen", label="ACCEPT"]
+  class accept_line [color = "green"]
+  class fake [shape=none, width=1]
+  class ACCEPT [shape=box]
+  class LOG [shape=box]
+  class chain [shape=ellipse]
+  class empty_chain [shape=ellipse, style=dotted, linecolor="#444", textcolor="#444"]
+}
+</desc>
+  <rect fill="rgb(0,0,0)" height="40" stroke="rgb(0,0,0)" style="filter:url(#filter_blur);opacity:0.7;fill-opacity:1" width="200" x="67" y="46" />
+  <polygon fill="rgb(0,0,0)" points="167,118 275,146 167,174 59,146 167,118" stroke="rgb(0,0,0)" style="filter:url(#filter_blur);opacity:0.7;fill-opacity:1" />
+  <rect fill="rgb(0,0,0)" height="40" stroke="rgb(0,0,0)" style="filter:url(#filter_blur);opacity:0.7;fill-opacity:1" width="200" x="331" y="126" />
+  <polygon fill="rgb(0,0,0)" points="167,198 275,226 167,254 59,226 167,198" stroke="rgb(0,0,0)" style="filter:url(#filter_blur);opacity:0.7;fill-opacity:1" />
+  <rect fill="rgb(0,0,0)" height="40" stroke="rgb(0,0,0)" style="filter:url(#filter_blur);opacity:0.7;fill-opacity:1" width="200" x="331" y="206" />
+  <rect fill="rgb(0,0,0)" height="40" stroke="rgb(0,0,0)" style="filter:url(#filter_blur);opacity:0.7;fill-opacity:1" width="200" x="67" y="286" />
+  <rect fill="rgb(0,0,0)" height="40" stroke="rgb(0,0,0)" style="filter:url(#filter_blur);opacity:0.7;fill-opacity:1" width="200" x="67" y="366" />
+  <rect fill="rgb(0,0,0)" height="40" stroke="rgb(0,0,0)" style="filter:url(#filter_blur);opacity:0.7;fill-opacity:1" width="200" x="67" y="446" />
+  <rect fill="rgb(0,0,0)" height="40" stroke="rgb(0,0,0)" style="filter:url(#filter_blur);opacity:0.7;fill-opacity:1" width="150" x="92" y="526" />
+  <ellipse cx="167" cy="626" fill="rgb(0,0,0)" rx="75.0" ry="20.0" stroke="rgb(0,0,0)" style="filter:url(#filter_blur);opacity:0.7;fill-opacity:1" />
+  <ellipse cx="167" cy="706" fill="rgb(0,0,0)" rx="75.0" ry="20.0" stroke="rgb(0,0,0)" style="filter:url(#filter_blur);opacity:0.7;fill-opacity:1" />
+  <rect fill="rgb(255,255,255)" height="40" stroke="rgb(0,0,0)" width="200" x="64" y="40" />
+  <text fill="rgb(0,0,0)" font-family="sans-serif" font-size="11" font-style="normal" font-weight="normal" text-anchor="middle" textLength="30" x="164.0" y="66">INPUT</text>
+  <polygon fill="rgb(255,255,255)" points="164,112 272,140 164,168 56,140 164,112" stroke="rgb(0,0,0)" />
+  <text fill="rgb(0,0,0)" font-family="sans-serif" font-size="11" font-style="normal" font-weight="normal" text-anchor="middle" textLength="66" x="164.0" y="146">in:eth0 tcp</text>
+  <rect fill="rgb(255,255,255)" height="40" stroke="rgb(0,0,0)" stroke-dasharray="0 65535" width="200" x="328" y="120" />
+  <text fill="rgb(0,0,0)" font-family="sans-serif" font-size="14" font-style="normal" font-weight="normal" text-anchor="middle" textLength="198" x="428.0" y="139">Rule that matches tcp paka</text>
+  <text fill="rgb(0,0,0)" font-family="sans-serif" font-size="14" font-style="normal" font-weight="normal" text-anchor="middle" textLength="99" x="428.5" y="155">ges from eth0</text>
+  <polygon fill="rgb(255,255,255)" points="164,192 272,220 164,248 56,220 164,192" stroke="rgb(0,0,0)" />
+  <text fill="rgb(0,0,0)" font-family="sans-serif" font-size="11" font-style="normal" font-weight="normal" text-anchor="middle" textLength="6" x="164.0" y="226">*</text>
+  <rect fill="rgb(255,255,255)" height="40" stroke="rgb(0,0,0)" stroke-dasharray="0 65535" width="200" x="328" y="200" />
+  <text fill="rgb(0,0,0)" font-family="sans-serif" font-size="14" font-style="normal" font-weight="normal" text-anchor="middle" textLength="183" x="428.5" y="227">Rule that always matches</text>
+  <rect fill="rgb(144,238,144)" height="40" stroke="rgb(0,0,0)" width="200" x="64" y="280" />
+  <text fill="rgb(0,0,0)" font-family="sans-serif" font-size="11" font-style="normal" font-weight="normal" text-anchor="middle" textLength="36" x="164.0" y="306">ACCEPT</text>
+  <rect fill="rgb(255,0,0)" height="40" stroke="rgb(0,0,0)" width="200" x="64" y="360" />
+  <text fill="rgb(0,0,0)" font-family="sans-serif" font-size="11" font-style="normal" font-weight="normal" text-anchor="middle" textLength="24" x="164.0" y="386">DROP</text>
+  <rect fill="rgb(26,179,255)" height="40" stroke="rgb(0,0,0)" width="200" x="64" y="440" />
+  <text fill="rgb(0,0,0)" font-family="sans-serif" font-size="11" font-style="normal" font-weight="normal" text-anchor="middle" textLength="36" x="164.0" y="466">RETURN</text>
+  <rect fill="rgb(255,255,255)" height="40" stroke="rgb(0,0,0)" width="150" x="89" y="520" />
+  <text fill="rgb(0,0,0)" font-family="sans-serif" font-size="11" font-style="normal" font-weight="normal" text-anchor="middle" textLength="30" x="164.0" y="546">AUDIT</text>
+  <ellipse cx="164" cy="620" fill="rgb(255,255,255)" rx="75.0" ry="20.0" stroke="rgb(0,0,0)" />
+  <text fill="rgb(0,0,0)" font-family="sans-serif" font-size="11" font-style="normal" font-weight="normal" text-anchor="middle" textLength="108" x="164.0" y="626">user defined chain</text>
+  <ellipse cx="164" cy="700" fill="rgb(255,255,255)" rx="75.0" ry="20.0" stroke="rgb(68,68,68)" stroke-dasharray="2" />
+  <text fill="rgb(68,68,68)" font-family="sans-serif" font-size="11" font-style="normal" font-weight="normal" text-anchor="middle" textLength="66" x="164.0" y="706">empty chain</text>
+  <rect fill="none" height="60" stroke="rgb(243,152,0)" stroke-dasharray="0 196605" stroke-width="3" width="480" x="56" y="110" />
+  <rect fill="none" height="60" stroke="rgb(243,152,0)" stroke-dasharray="0 196605" stroke-width="3" width="480" x="56" y="190" />
+</svg>
