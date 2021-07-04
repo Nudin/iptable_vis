@@ -174,6 +174,7 @@ function finalize_chain() {
 }
 
 END {
+	filter_number[chainname] = filters_in_chain
 	if (in_relevant_chain)
 		finalize_chain()
 	print indent "class chain_head [shape=ellipse]"
