@@ -7,7 +7,7 @@ This script reads iptables output and generates a nice flow chart. Works with al
 
 Usage
 =====
-- Clone repo, make sure awk is installed, install blockdiag
+- Clone repo, make sure awk is installed, install [blockdiag](http://blockdiag.com)
 - `iptables -v -L > iptables.txt`
 - `awk -f iptables-vis.awk < iptables.txt > iptables.dia`
 - `blockdiag iptables.dia -T svg -o iptables.svg`
