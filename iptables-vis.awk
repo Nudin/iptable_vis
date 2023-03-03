@@ -68,7 +68,8 @@ in_chain && /^ *[0-9]/ {
 		label = "*"
 	gsub(/  /, " ", label);
 	gsub(/^ *| *$/, "", label);
-	print indent name " [class=rule, label=\"" label "\"]"
+	gsub(/'/, "\\'", label);
+	print indent name " [class=rule, label='" label "']"
 	print indent last, "->", name
 	last=name
 	filter_nodes[num_targets++] = name
@@ -143,6 +144,7 @@ function finalize_chain() {
 		target = targets[name]
 		target_node_name = target_node_names[name]
 		target_label = target_labels[target_node_name]
+		target_label_esc = gensub(/'/, "\\'", "g", target_label)
 		if ( allready_rendered[target_node_name] )
 			continue
 		else
@@ -154,13 +156,13 @@ function finalize_chain() {
 			print indent chainname "_DROP [class=drop]"
 		}
 		else if ( target ~ "^REJECT($|_)" ) {
-			print indent target_node_name " [class=reject, label=\"" target_label "\"]"
+			print indent target_node_name " [class=reject, label='" target_label_esc"']"
 		}
 		else if ( target ~ "^RETURN$" ) {
 			print indent chainname "_RETURN [class=return]"
 		}
 		else {
-			print indent target_node_name " [class=target, class=\"" target_label "\", label=\"" target_label "\"]"
+			print indent target_node_name " [class=target, class='" target_label_esc"', label='" target_label_esc "']"
 		}
 	}
 	delete filter_nodes
