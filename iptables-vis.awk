@@ -143,8 +143,8 @@ function finalize_chain() {
 	for ( name in target_node_names ) {
 		target = targets[name]
 		target_node_name = target_node_names[name]
-		target_label = target_labels[target_node_name]
-		target_label_esc = gensub(/'/, "\\'", "g", target_label)
+		target_label_esc =target_label = target_labels[target_node_name]
+		gsub(/\47/, "\\\\&", target_label_esc)
 		if ( allready_rendered[target_node_name] )
 			continue
 		else
